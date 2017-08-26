@@ -6,7 +6,7 @@ import Model from './model'
 import { toKnexSchema } from './types'
 import { runQuery } from './helpers'
 import { invariant, makeDirPath } from './util'
-import { setup, modelOptions } from './enforcers'
+import { setup } from './enforcers'
 import { connect, readDatabase } from './sqljs-handler'
 
 class Trilogy {
@@ -61,7 +61,7 @@ class Trilogy {
     const check = this.knex.schema.hasTable(name)
     const query = this.knex.schema
       .createTableIfNotExists(name,
-        toKnexSchema(model, modelOptions(options))
+        toKnexSchema(model, options)
       )
 
     // we still check to see if the table exists to prevent

@@ -1,6 +1,6 @@
 import * as util from './util'
 import { isWhereArrayLike } from './helpers'
-import { columnDescriptor } from './enforcers'
+import { columnDescriptor, modelOptions } from './enforcers'
 import { KNEX_NO_ARGS, COLUMN_TYPES, IGNORABLE_PROPS } from './constants'
 
 export function toKnexSchema (model, options) {
@@ -25,13 +25,17 @@ export function toKnexSchema (model, options) {
       })
     })
 
-    util.each(options, (value, key) => {
-      if (key === 'timestamps') {
-        options.timestamps && table.timestamps(true, true)
-      } else {
-        table[key](value)
-      }
-    })
+    if (typeof options === 'function') {
+      options(table)
+    } else {
+      util.each(modelOptions(options), (value, key) => {
+        if (key === 'timestamps') {
+          options.timestamps && table.timestamps(true, true)
+        } else {
+          table[key](value)
+        }
+      })
+    }
   }
 }
 
