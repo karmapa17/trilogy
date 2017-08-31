@@ -15,6 +15,16 @@ test.before(async () => {
     }
   })
 
+  await db.model('anotherPeople', {
+    name: {
+      type: String
+    },
+    age: {
+      type: Number,
+      set: age => (typeof age === 'string') ? 0 : age
+    }
+  })
+
   return db.create('people', {
     name: 'Joey Smith',
     age: 20
@@ -97,4 +107,15 @@ test('getters are not fired when `options.raw` is set', async t => {
 
   t.is(fired.name, 'A-A-RON')
   t.is(bypassed.name, 'A-A-ron')
+})
+
+test('value fed to getters should remain same as given', async t => {
+  await db.create('anotherPeople', {
+    name: 'miller',
+    age: '20.10'
+  })
+
+  const anotherPeople = await db.findOne('anotherPeople', { name: 'miller' })
+
+  t.is(anotherPeople.age, 0)
 })
